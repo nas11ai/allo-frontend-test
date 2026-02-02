@@ -7,6 +7,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AddRocketDialogue: typeof import('./src/components/AddRocketDialogue.vue')['default']
     EmptyState: typeof import('./src/components/EmptyState.vue')['default']
     ErrorState: typeof import('./src/components/ErrorState.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']

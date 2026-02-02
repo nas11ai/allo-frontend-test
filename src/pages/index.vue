@@ -45,9 +45,7 @@
             </v-col>
 
             <v-col cols="12" md="3" class="text-right">
-              <v-btn color="primary" variant="outlined" density="comfortable">
-                Tambah Data
-              </v-btn>
+              <AddRocketDialog />
             </v-col>
           </v-row>
 
@@ -139,6 +137,7 @@
 import { onMounted, computed, ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useRocketStore } from "@/stores/rockets";
+import AddRocketDialog from "@/components/AddRocketDialogue.vue";
 import RocketCard from "@/components/RocketCard.vue";
 import LoadingState from "@/components/LoadingState.vue";
 import ErrorState from "@/components/ErrorState.vue";
@@ -222,9 +221,6 @@ onMounted(() => {
 }
 
 .carousel-nav-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
   z-index: 2;
 }
 

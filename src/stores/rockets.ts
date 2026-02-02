@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 import { rocketApi } from "@/api/rockets";
-import type { Rocket } from "@/types/rocket";
+import type { Rocket, RocketFormData } from "@/types/rocket";
 
 export const useRocketStore = defineStore("rockets", () => {
   // State
@@ -58,6 +58,71 @@ export const useRocketStore = defineStore("rockets", () => {
     }
   };
 
+  const addRocket = async (rocketData: RocketFormData) => {
+    // Since SpaceX API doesn't support POST, we'll simulate adding locally
+    const newRocket: Rocket = {
+      id: `custom-${Date.now()}`,
+      name: rocketData.name,
+      description: rocketData.description,
+      country: rocketData.country,
+      company: rocketData.company,
+      cost_per_launch: rocketData.cost_per_launch,
+      first_flight: rocketData.first_flight,
+      flickr_images: rocketData.flickr_images,
+      active: true,
+      type: "custom",
+      stages: 2,
+      boosters: 0,
+      success_rate_pct: 0,
+      wikipedia: "",
+      height: { meters: null, feet: null },
+      diameter: { meters: null, feet: null },
+      mass: { kg: 0, lb: 0 },
+      first_stage: {
+        thrust_sea_level: { kN: 0, lbf: 0 },
+        thrust_vacuum: { kN: 0, lbf: 0 },
+        reusable: false,
+        engines: 0,
+        fuel_amount_tons: 0,
+        burn_time_sec: null,
+      },
+      second_stage: {
+        thrust: { kN: 0, lbf: 0 },
+        payloads: {
+          composite_fairing: {
+            height: { meters: null, feet: null },
+            diameter: { meters: null, feet: null },
+          },
+          option_1: "",
+        },
+        reusable: false,
+        engines: 0,
+        fuel_amount_tons: 0,
+        burn_time_sec: null,
+      },
+      engines: {
+        isp: { sea_level: 0, vacuum: 0 },
+        thrust_sea_level: { kN: 0, lbf: 0 },
+        thrust_vacuum: { kN: 0, lbf: 0 },
+        number: 0,
+        type: "",
+        version: "",
+        layout: null,
+        engine_loss_max: null,
+        propellant_1: "",
+        propellant_2: "",
+        thrust_to_weight: 0,
+      },
+      landing_legs: {
+        number: 0,
+        material: null,
+      },
+      payload_weights: [],
+    };
+
+    rockets.value.unshift(newRocket);
+  };
+
   const setFilter = (active: boolean | null) => {
     filterActive.value = active;
   };
@@ -83,6 +148,7 @@ export const useRocketStore = defineStore("rockets", () => {
     inactiveRockets,
     // Actions
     fetchRockets,
+    addRocket,
     setFilter,
     setSearchQuery,
     clearError,
