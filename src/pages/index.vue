@@ -2,7 +2,7 @@
   <div class="rocket-list-page">
     <!-- Header Section -->
     <v-container fluid class="pa-0">
-      <v-sheet color="primary" class="pa-4 mb-6">
+      <v-sheet color="primary" class="pa-8 mb-6">
         <v-container>
           <h1 class="text-h3 text-white font-weight-bold mb-2">
             SpaceX Rockets
@@ -16,7 +16,7 @@
 
     <v-container>
       <!-- Filters and Actions -->
-      <v-card class="mb-6" elevation="1">
+      <v-card class="mb-2" elevation="1">
         <v-card-text>
           <v-row align="center">
             <v-col cols="12" md="5">
@@ -50,22 +50,170 @@
           <v-row class="mt-2">
             <v-col cols="12">
               <div class="text-caption text-grey">
-                Showing {{ 1 }} of {{ 99 }} rockets
+                Showing {{ rockets.length }} of {{ rockets.length }} rockets
               </div>
             </v-col>
           </v-row>
         </v-card-text>
       </v-card>
 
+      <!-- Loading State -->
+      <LoadingState v-if="loading && !error" message="Loading rockets..." />
+
+      <!-- Error State -->
+      <ErrorState v-else-if="error" :message="error" @retry="retryFetch" />
+
+      <!-- Empty State -->
       <EmptyState
+        v-else-if="!loading && rockets.length === 0"
         title="No Rockets Found"
         message="Try adjusting your search or filter criteria."
         icon="mdi-rocket"
       />
+
+      <!-- Rockets Carousel for Desktop -->
+      <div v-else class="rockets-container">
+        <!-- Desktop View - Carousel -->
+        <div class="d-none d-md-block">
+          <v-carousel
+            v-model="carouselModel"
+            hide-delimiters
+            :show-arrows="rockets.length > 4"
+            height="auto"
+            class="rocket-carousel"
+          >
+            <template v-slot:prev="{ props }">
+              <v-btn
+                v-bind="props"
+                color="primary"
+                size="large"
+                class="carousel-nav-btn"
+              />
+            </template>
+
+            <template v-slot:next="{ props }">
+              <v-btn
+                v-bind="props"
+                color="primary"
+                size="large"
+                class="carousel-nav-btn"
+              />
+            </template>
+
+            <v-carousel-item
+              v-for="(slide, index) in carouselSlides"
+              :key="index"
+            >
+              <v-row class="ma-0">
+                <v-col
+                  v-for="rocket in slide"
+                  :key="rocket.id"
+                  cols="3"
+                  class="pa-2"
+                >
+                  <RocketCard :rocket="rocket" />
+                </v-col>
+              </v-row>
+            </v-carousel-item>
+          </v-carousel>
+        </div>
+
+        <!-- Mobile View - Grid -->
+        <v-row class="d-md-none">
+          <v-col v-for="rocket in rockets" :key="rocket.id" cols="12" sm="6">
+            <RocketCard :rocket="rocket" />
+          </v-col>
+        </v-row>
+      </div>
     </v-container>
   </div>
 </template>
 
 <script setup lang="ts">
-// TODO: Implement the logic for fetching rockets, handling search and filter
+import { onMounted, computed, ref } from "vue";
+import { storeToRefs } from "pinia";
+import { useRocketStore } from "@/stores/rockets";
+import RocketCard from "@/components/RocketCard.vue";
+import LoadingState from "@/components/LoadingState.vue";
+import ErrorState from "@/components/ErrorState.vue";
+import EmptyState from "@/components/EmptyState.vue";
+import type { Rocket } from "@/types/rocket";
+
+const rocketStore = useRocketStore();
+const { rockets, loading, error } = storeToRefs(rocketStore);
+
+const carouselModel = ref(0);
+
+const carouselSlides = computed(() => {
+  const slides: Rocket[][] = [];
+  const itemsPerSlide = 4;
+
+  for (let i = 0; i < rockets.value.length; i += itemsPerSlide) {
+    slides.push(rockets.value.slice(i, i + itemsPerSlide));
+  }
+
+  return slides;
+});
+
+const retryFetch = async () => {
+  rocketStore.clearError();
+  await fetchRockets();
+};
+
+const fetchRockets = async () => {
+  try {
+    await rocketStore.fetchRockets();
+  } catch (err) {
+    console.error("Failed to fetch rockets:", err);
+  }
+};
+
+onMounted(() => {
+  fetchRockets();
+});
 </script>
+
+<style scoped>
+.rocket-list-page {
+  min-height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
+}
+
+.rockets-container {
+  max-height: calc(100vh - 400px);
+}
+
+.rocket-carousel {
+  background: transparent !important;
+}
+
+.rocket-carousel :deep(.v-window__container) {
+  padding: 0 50px;
+}
+
+.carousel-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+}
+
+/* Ensure cards don't overflow */
+.rocket-carousel :deep(.v-carousel-item) {
+  display: flex;
+  align-items: center;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 960px) {
+  .rocket-list-page {
+    max-height: none;
+    overflow: auto;
+  }
+
+  .rockets-container {
+    max-height: none;
+  }
+}
+</style>
