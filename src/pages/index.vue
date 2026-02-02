@@ -2,7 +2,7 @@
   <div class="rocket-list-page">
     <!-- Header Section -->
     <v-container fluid class="pa-0">
-      <v-sheet color="primary" class="pa-8 mb-6">
+      <v-sheet color="primary" class="">
         <v-container>
           <h1 class="text-h3 text-white font-weight-bold mb-2">
             SpaceX Rockets
@@ -16,7 +16,7 @@
 
     <v-container>
       <!-- Filters and Actions -->
-      <v-card class="mb-2" elevation="1">
+      <v-card elevation="1">
         <v-card-text>
           <v-row align="center">
             <v-col cols="12" md="5">
@@ -204,12 +204,6 @@ onMounted(() => {
 <style scoped>
 .rocket-list-page {
   min-height: 100vh;
-  max-height: 100vh;
-  overflow: hidden;
-}
-
-.rockets-container {
-  max-height: calc(100vh - 400px);
 }
 
 .rocket-carousel {
@@ -233,12 +227,7 @@ onMounted(() => {
 /* Mobile responsiveness */
 @media (max-width: 960px) {
   .rocket-list-page {
-    max-height: none;
     overflow: auto;
-  }
-
-  .rockets-container {
-    max-height: none;
   }
 }
 </style>

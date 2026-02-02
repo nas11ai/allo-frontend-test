@@ -1,6 +1,6 @@
 <template>
   <v-card
-    class="rocket-card"
+    class="rocket-card d-flex flex-column"
     :class="{ 'inactive-rocket': !rocket.active }"
     elevation="2"
     hover
@@ -35,15 +35,21 @@
       </v-chip>
     </v-img>
 
-    <v-card-title class="text-h6">
+    <v-card-title class="text-h6 pb-1">
       {{ rocket.name }}
     </v-card-title>
 
-    <v-card-subtitle class="text-caption">
+    <v-card-subtitle class="text-caption pb-2">
       {{ rocket.country }} • {{ rocket.company }}
     </v-card-subtitle>
 
-    <v-card-actions>
+    <v-card-text class="flex-grow-1 pt-0">
+      <p class="rocket-description">
+        {{ truncatedDescription }}
+      </p>
+    </v-card-text>
+
+    <v-card-actions class="mt-auto">
       <v-btn color="primary" variant="text" @click.stop="navigateToDetail">
         View Details
         <v-icon end>mdi-arrow-right</v-icon>
@@ -72,8 +78,9 @@ const rocketImage = computed(() => {
 });
 
 const truncatedDescription = computed(() => {
-  if (props.rocket.description.length > 150) {
-    return props.rocket.description.substring(0, 150) + "...";
+  const maxLength = 100;
+  if (props.rocket.description.length > maxLength) {
+    return props.rocket.description.substring(0, maxLength) + "...";
   }
   return props.rocket.description;
 });
@@ -101,6 +108,7 @@ const navigateToDetail = () => {
 .rocket-card {
   cursor: pointer;
   transition: transform 0.2s ease-in-out;
+  height: 100%;
 }
 
 .rocket-card:hover {
@@ -114,11 +122,18 @@ const navigateToDetail = () => {
 .rocket-description {
   font-size: 0.875rem;
   line-height: 1.5;
-  color: white;
-  min-height: 60px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: 63px;
+  max-height: 63px;
+  line-clamp: 3;
 }
 
 .rocket-image {
   position: relative;
+  flex-shrink: 0;
 }
 </style>
