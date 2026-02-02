@@ -11,7 +11,6 @@
 
     <!-- Rocket Detail Content -->
     <div v-else-if="currentRocket" class="detail-wrapper">
-      <!-- Hero Section + Quick Stats (100vh) -->
       <div class="hero-and-stats-section">
         <!-- Hero Section -->
         <v-container fluid class="pa-0">
@@ -62,7 +61,6 @@
           </v-sheet>
         </v-container>
 
-        <!-- Quick Stats (40vh) -->
         <v-container class="quick-stats-container">
           <v-row class="ma-0">
             <v-col cols="12" sm="6" md="3">
@@ -362,7 +360,7 @@ const heroImage = computed(() => {
   ) {
     return currentRocket.value.flickr_images[0];
   }
-  return "https://via.placeholder.com/1200x400?text=No+Image+Available";
+  return "https://placehold.co/1200x400?text=No+Image+Available";
 });
 
 const formatCurrency = (value: number): string => {
@@ -422,7 +420,6 @@ onUnmounted(() => {
   min-height: 100vh;
 }
 
-/* Hero + Stats Section - Fixed 100vh */
 .hero-and-stats-section {
   height: 100vh;
   display: flex;
