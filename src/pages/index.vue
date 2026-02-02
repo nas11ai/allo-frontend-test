@@ -2,7 +2,7 @@
   <div class="rocket-list-page">
     <!-- Header Section -->
     <v-container fluid class="pa-0">
-      <v-sheet color="primary" class="pa-8 mb-6">
+      <v-sheet color="primary" class="pa-4 mb-6">
         <v-container>
           <h1 class="text-h3 text-white font-weight-bold mb-2">
             SpaceX Rockets
@@ -57,7 +57,11 @@
         </v-card-text>
       </v-card>
 
-      <!--TODO: init Empty State -->
+      <EmptyState
+        title="No Rockets Found"
+        message="Try adjusting your search or filter criteria."
+        icon="mdi-rocket"
+      />
     </v-container>
   </div>
 </template>
