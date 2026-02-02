@@ -6,6 +6,7 @@ import type { Rocket, RocketFormData } from "@/types/rocket";
 export const useRocketStore = defineStore("rockets", () => {
   // State
   const rockets = ref<Rocket[]>([]);
+  const currentRocket = ref<Rocket | null>(null);
   const loading = ref(false);
   const error = ref<string | null>(null);
   const filterActive = ref<boolean | null>(null);
@@ -58,8 +59,21 @@ export const useRocketStore = defineStore("rockets", () => {
     }
   };
 
+  const fetchRocketById = async (id: string) => {
+    loading.value = true;
+    error.value = null;
+    try {
+      currentRocket.value = await rocketApi.getRocketById(id);
+    } catch (err: unknown) {
+      error.value =
+        err instanceof Error ? err.message : "Failed to fetch rockets";
+      throw err;
+    } finally {
+      loading.value = false;
+    }
+  };
+
   const addRocket = async (rocketData: RocketFormData) => {
-    // Since SpaceX API doesn't support POST, we'll simulate adding locally
     const newRocket: Rocket = {
       id: `custom-${Date.now()}`,
       name: rocketData.name,
@@ -135,9 +149,14 @@ export const useRocketStore = defineStore("rockets", () => {
     error.value = null;
   };
 
+  const resetCurrentRocket = () => {
+    currentRocket.value = null;
+  };
+
   return {
     // State
     rockets,
+    currentRocket,
     loading,
     error,
     filterActive,
@@ -148,9 +167,11 @@ export const useRocketStore = defineStore("rockets", () => {
     inactiveRockets,
     // Actions
     fetchRockets,
+    fetchRocketById,
     addRocket,
     setFilter,
     setSearchQuery,
     clearError,
+    resetCurrentRocket,
   };
 });

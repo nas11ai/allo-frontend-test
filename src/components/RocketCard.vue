@@ -92,7 +92,8 @@ const formatDate = (dateString: string): string => {
 };
 
 const navigateToDetail = () => {
-  router.push({ name: "rocket-detail", params: { id: props.rocket.id } });
+  console.log(router.getRoutes());
+  router.push(`/rocket-detail/${props.rocket.id}`);
 };
 </script>
 
