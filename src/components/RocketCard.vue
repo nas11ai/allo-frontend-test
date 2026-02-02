@@ -68,7 +68,7 @@ const rocketImage = computed(() => {
   if (props.rocket.flickr_images && props.rocket.flickr_images.length > 0) {
     return props.rocket.flickr_images[0];
   }
-  return "https://via.placeholder.com/400x250?text=No+Image+Available";
+  return "https://placehold.co/400x250?text=No+Image+Available";
 });
 
 const truncatedDescription = computed(() => {
