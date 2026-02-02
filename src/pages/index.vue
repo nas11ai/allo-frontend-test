@@ -21,21 +21,26 @@
           <v-row align="center">
             <v-col cols="12" md="5">
               <v-text-field
+                v-model="searchQuery"
                 label="Search rockets"
                 prepend-inner-icon="mdi-magnify"
                 variant="outlined"
                 density="comfortable"
                 clearable
                 hide-details
+                @update:model-value="handleSearch"
               ></v-text-field>
             </v-col>
 
             <v-col cols="12" md="4">
               <v-select
+                v-model="filterStatus"
+                :items="filterOptions"
                 label="Filter by status"
                 variant="outlined"
                 density="comfortable"
                 hide-details
+                @update:model-value="handleFilter"
               ></v-select>
             </v-col>
 
@@ -50,7 +55,8 @@
           <v-row class="mt-2">
             <v-col cols="12">
               <div class="text-caption text-grey">
-                Showing {{ rockets.length }} of {{ rockets.length }} rockets
+                Showing {{ filteredRockets.length }} of
+                {{ rockets.length }} rockets
               </div>
             </v-col>
           </v-row>
@@ -140,7 +146,7 @@ import EmptyState from "@/components/EmptyState.vue";
 import type { Rocket } from "@/types/rocket";
 
 const rocketStore = useRocketStore();
-const { rockets, loading, error } = storeToRefs(rocketStore);
+const { rockets, filteredRockets, loading, error } = storeToRefs(rocketStore);
 
 const carouselModel = ref(0);
 
@@ -148,12 +154,35 @@ const carouselSlides = computed(() => {
   const slides: Rocket[][] = [];
   const itemsPerSlide = 4;
 
-  for (let i = 0; i < rockets.value.length; i += itemsPerSlide) {
-    slides.push(rockets.value.slice(i, i + itemsPerSlide));
+  for (let i = 0; i < filteredRockets.value.length; i += itemsPerSlide) {
+    slides.push(filteredRockets.value.slice(i, i + itemsPerSlide));
   }
 
   return slides;
 });
+
+const searchQuery = ref("");
+const filterStatus = ref("all");
+
+const filterOptions = [
+  { title: "All Rockets", value: "all" },
+  { title: "Active Only", value: "active" },
+  { title: "Inactive Only", value: "inactive" },
+];
+
+const handleSearch = (query: string | null) => {
+  rocketStore.setSearchQuery(query || "");
+};
+
+const handleFilter = (value: string) => {
+  if (value === "active") {
+    rocketStore.setFilter(true);
+  } else if (value === "inactive") {
+    rocketStore.setFilter(false);
+  } else {
+    rocketStore.setFilter(null);
+  }
+};
 
 const retryFetch = async () => {
   rocketStore.clearError();
